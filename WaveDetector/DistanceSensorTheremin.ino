@@ -11,6 +11,10 @@
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
 Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
 
+int pwmChannel = 0;
+int freq = 5000;         // 5 kHz
+int resolution = 255;      // duty: 0–255
+
 void setup() {
   Serial.begin(115200);
   pinMode(LED1, OUTPUT);
@@ -49,6 +53,11 @@ void setup() {
     while(1);
   }
 
+  Serial.println("PWM initializing");
+
+  ledcSetup(0, freq, resolution);
+  ledcAttachPin(LED2, pwmChannel);
+
   // power 
   Serial.println(F("VL53L0X API Simple Ranging example\n\n")); 
 }
@@ -57,6 +66,7 @@ int prevTime = 0;
 int prevSensor = 0;
 int curtime = 0;
 int timeout = 1000;
+int mode = 0; // 0 for gestures, 1 for height (volume)
 
 
 void loop() {
@@ -90,9 +100,9 @@ void loop() {
     }
     else if (prevSensor == 1 && curtime < (prevTime + timeout)) {
       Serial.println("LEFT WAVE DETECTED");
-      digitalWrite(LED2, HIGH);
+      ledcWrite(pwmChannel, 255);
       delay(1000);
-      digitalWrite(LED2, LOW);
+      ledcWrite(pwmChannel, 255);
       prevSensor = 0;
       prevTime = -1000;
     }
