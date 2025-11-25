@@ -67,6 +67,8 @@ int prevSensor = 0;
 int curtime = 0;
 int timeout = 1000;
 int mode = 0; // 0 for gestures, 1 for height (volume)
+int modeTime = -1;
+int volume = 0;
 
 
 void loop() {
@@ -79,50 +81,75 @@ void loop() {
   lox1.rangingTest(&measure1, false); // pass in 'true' to get debug data printout!
   lox2.rangingTest(&measure2, false);
 
-  if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
-    if (prevSensor == 0 || curtime > (prevTime + timeout)) {
-      prevSensor = 1;
-      prevTime = curtime;
+  if (mode == 0) {
+    if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
+      // If both sensors detected, check if held for 3 seconds. Switch mode if so
+      if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
+        if (modeTime < 0) {
+          modeTime = curtime + 3000;
+        }
+        else if (modeTime > 0 && modeTime <= curtime)
+        {
+          mode = 1;
+          modeTime = -1;
+          Serial.println("Mode Switched");
+        }
+      }
+      else
+      {
+        modeTime = -1;
+      }
+      if (prevSensor == 0 || curtime > (prevTime + timeout)) {
+        prevSensor = 1;
+        prevTime = curtime;
+      }
+      else if (prevSensor == 2 && curtime < (prevTime + timeout)) {
+        Serial.println("RIGHT WAVE DETECTED");
+        digitalWrite(LED1, HIGH);
+        delay(1000);
+        digitalWrite(LED1, LOW);
+        prevSensor = 0;
+        prevTime = -1000;
+      }
     }
-    else if (prevSensor == 2 && curtime < (prevTime + timeout)) {
-      Serial.println("RIGHT WAVE DETECTED");
-      digitalWrite(LED1, HIGH);
-      delay(1000);
-      digitalWrite(LED1, LOW);
-      prevSensor = 0;
-      prevTime = -1000;
+    else if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
+      if (prevSensor == 0 || curtime > (prevTime + timeout)) {
+        prevSensor = 2;
+        prevTime = curtime;
+      }
+      else if (prevSensor == 1 && curtime < (prevTime + timeout)) {
+        Serial.println("LEFT WAVE DETECTED");
+        ledcWrite(pwmChannel, 255);
+        delay(1000);
+        ledcWrite(pwmChannel, 0);
+        prevSensor = 0;
+        prevTime = -1000;
+      }
     }
   }
-  else if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
-    if (prevSensor == 0 || curtime > (prevTime + timeout)) {
-      prevSensor = 2;
-      prevTime = curtime;
-    }
-    else if (prevSensor == 1 && curtime < (prevTime + timeout)) {
-      Serial.println("LEFT WAVE DETECTED");
-      ledcWrite(pwmChannel, 255);
-      delay(1000);
-      ledcWrite(pwmChannel, 0);
-      prevSensor = 0;
-      prevTime = -1000;
+  else // Volume control mode
+  {
+    // Emulate volume control in the light at pin 26
+    if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
+      volume = measure1.RangeMilliMeter / (600 / 255);
+      Serial.println(volume);
+      ledcWrite(pwmChannel, volume);
+      if (measure1.RangeMilliMeter < 200) {
+        if (modeTime < 0) {
+          modeTime = millis() + 3000;
+        }
+        else if (modeTime < millis()) {
+          mode = 0;
+          modeTime = -1;
+          ledcWrite(pwmChannel, 0);
+        }
+      }
+      else
+      {
+        modeTime = -1;
+      }
     }
   }
-    // Serial.print("Distance (mm)(1): "); Serial.println(measure1.RangeMilliMeter);
-  // } else {
-  //   digitalWrite(LED1, LOW);
-  //   Serial.println(" 1 out of range ");
-  // }
-
-  // Sensor 2, LED only
-  // if (measure2.RangeStatus != 4) {  // phase failures have incorrect data
-  //   if (measure2.RangeMilliMeter < 600) {
-  //     digitalWrite(LED2, HIGH);
-  //   }
-  //   Serial.print("Distance (mm)(2): "); Serial.println(measure2.RangeMilliMeter);
-  // } else {
-  //   digitalWrite(LED2, LOW);
-  //   Serial.println(" 2 out of range ");
-  // }
     
   delay(50);
 }
