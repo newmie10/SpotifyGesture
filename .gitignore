@@ -6,3 +6,37 @@
 /WaveDetector/.vscode/launch.json
 /WaveDetector/.vscode/ipch
 
+# HandSignalDetection
+
+/HandSignalDetection/S3_Files/.pio
+/HandSignalDetection/S3_Files/.vscode
+
+# Python environment and build artifacts
+HandSignalDetection/Model_Training/__pycache__/
+HandSignalDetection/Model_Training/*.pyc
+HandSignalDetection/Model_Training/*.pyo
+HandSignalDetection/Model_Training/*.pyd
+
+# Virtual environments
+HandSignalDetection/Model_Training/venv/
+HandSignalDetection/Model_Training/.venv/
+HandSignalDetection/Model_Training/env/
+HandSignalDetection/Model_Training/.env/
+
+# Jupyter and checkpoints
+HandSignalDetection/Model_Training/.ipynb_checkpoints/
+
+# Packaging and build
+HandSignalDetection/Model_Training/build/
+HandSignalDetection/Model_Training/dist/
+HandSignalDetection/Model_Training/*.egg-info/
+
+# Logs
+HandSignalDetection/Model_Training/*.log
+
+# Cache and temp
+HandSignalDetection/Model_Training/.pytest_cache/
+HandSignalDetection/Model_Training/.mypy_cache/
+HandSignalDetection/Model_Training/.ruff_cache/
+HandSignalDetection/Model_Training/.DS_Store
+
