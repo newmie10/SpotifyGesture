@@ -10,15 +10,15 @@
 
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
 Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
-
+// Working on PWM
 int pwmChannel = 0;
 int freq = 5000;         // 5 kHz
-int resolution = 255;      // duty: 0–255
+int resolution = 8;      // duty: 0–255 wrong, its bits?
 
 void setup() {
   Serial.begin(115200);
   pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
+  // pinMode(LED2, OUTPUT);
   pinMode(XSHUT1, OUTPUT);
   pinMode(XSHUT2, OUTPUT);
   delay(5000);
@@ -102,7 +102,7 @@ void loop() {
       Serial.println("LEFT WAVE DETECTED");
       ledcWrite(pwmChannel, 255);
       delay(1000);
-      ledcWrite(pwmChannel, 255);
+      ledcWrite(pwmChannel, 0);
       prevSensor = 0;
       prevTime = -1000;
     }
