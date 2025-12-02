@@ -86,14 +86,10 @@ static const framesize_t CAM_FRAME_SIZE = FRAMESIZE_QQVGA;
 static const int CAM_JPEG_QUALITY = 12;
 
 
-// Number of frame buffers.
-// 1 = minimal RAM usage, good for DRAM only.
-// 2 or more = smoother stream but uses more memory (usually needs PSRAM).
+// Number of frame buffers - use 1 for DRAM only
 static const int CAM_FB_COUNT = 1;
 
-
-// If you later enable PSRAM and want frame buffers there, set this to true.
-// For now we are using only DRAM because PSRAM was giving you trouble.
+// Use DRAM for frame buffers
 static const bool CAM_USE_PSRAM = false;
 
 
