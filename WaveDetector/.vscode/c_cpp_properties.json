@@ -9,6 +9,7 @@
             "name": "PlatformIO",
             "includePath": [
                 "/home/snewman/Documents/umass/make/final/WaveDetector",
+                "/home/snewman/Documents/umass/make/final/WaveDetector/src",
                 "/home/snewman/Documents/umass/make/final/WaveDetector/.pio/libdeps/esp32dev/Adafruit_VL53L0X/src",
                 "/home/snewman/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "/home/snewman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
@@ -248,6 +249,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "/home/snewman/Documents/umass/make/final/WaveDetector",
+                    "/home/snewman/Documents/umass/make/final/WaveDetector/src",
                     "/home/snewman/Documents/umass/make/final/WaveDetector/.pio/libdeps/esp32dev/Adafruit_VL53L0X/src",
                     "/home/snewman/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "/home/snewman/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
