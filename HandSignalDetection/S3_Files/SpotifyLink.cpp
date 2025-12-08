@@ -202,7 +202,7 @@ bool is_None() {
     float mean = sum / (MODEL_W * MODEL_H);
   float contrast = max_val - min_val;
   
-    if (mean > 0.16f) {
+    if (mean > 0.3f) {
       return false;
     }
   
@@ -272,11 +272,6 @@ int runInference() {
   // Check if None
   if (is_None()) {
     return 1;  // None class
-  } else {
-    delay(250);
-    if (is_None()) {
-      return 1;  // None class
-    }
   }
   
   // Fill input tensor

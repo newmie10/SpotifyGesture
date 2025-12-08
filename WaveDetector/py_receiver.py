@@ -11,7 +11,12 @@ URI = "http://127.0.0.1:5173"
 ENV_PATH = ".env"
 
 # 1. Set these values:
-SERIAL_PORT = "/dev/ttyUSB0"  # Windows example: "COM3"
+# SERIAL_PORT = "/COM7"  # Windows example: "COM3"
+# On Windows, the serial port is usually something like "COM3", "COM4", etc.
+# You can check in Device Manager under "Ports (COM & LPT)".
+# On Linux/Mac, it is something like "/dev/ttyUSB0" or "/dev/ttyACM0".
+SERIAL_PORT = "COM7"  # <-- CHANGE THIS to your correct COM port!
+
 BAUD_RATE = 115200
 
 # Optional: fix a device_id if needed, otherwise None
@@ -117,6 +122,8 @@ def handle_command(cmd):
 
 
 def main():
+    print("NOTE: If this fails to connect, double check your serial port name!")
+    print("On Windows, it is usually COM3, COM4, etc. Check Device Manager > Ports.")
     ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
     print(f"Listening on {SERIAL_PORT} at {BAUD_RATE} baud")
 
