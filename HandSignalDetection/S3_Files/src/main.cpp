@@ -185,6 +185,34 @@ bool preprocessImage(camera_fb_t *fb) {
   return true;
 }
 
+
+ bool is_None() {
+  
+  float sum = 0.0f;
+  float min_val = 1.0f;
+  float max_val = 0.0f;
+  
+  // Pass 1: Calculate mean, min, max
+  for (int i = 0; i < MODEL_W * MODEL_H; i++) {
+    float pixel = input_buffer[i];
+    sum += pixel;
+    if (pixel < min_val) min_val = pixel;
+    if (pixel > max_val) max_val = pixel;
+  }
+  
+  float mean = sum / (MODEL_W * MODEL_H);
+float contrast = max_val - min_val;
+
+  if (mean > 0.15f) {
+    return false;
+  }
+
+  Serial.print("Mean:");
+  Serial.println(mean);
+
+  return true;
+}
+
 void fillInputTensor() {
   if (input->type == kTfLiteFloat32) {
     memcpy(input->data.f, input_buffer, MODEL_W * MODEL_H * sizeof(float));
@@ -357,8 +385,44 @@ void sendInference(WiFiClient &client) {
                 input_buffer[0], input_buffer[1], input_buffer[2], input_buffer[3]);
   Serial.printf("      ⏱️  Time: %d ms\n", step_time);
   
+  // Step 2.5: Pre-Inference None Check
+  Serial.println("\n[2.5/7] 🔍 Pre-Inference None Check");
+  step_start = millis();
+  
+  if (is_None()) {
+    step_time = millis() - step_start;
+    uint32_t total_time = millis() - total_start;
+    inference_count++;
+    
+    Serial.println("      ✓ Detected NONE class (skipping ML inference)");
+    Serial.printf("      ⏱️  Time: %d ms\n", step_time);
+    Serial.printf("\n⚡ Fast-path complete: %d ms total\n", total_time);
+    
+    // Send HTTP response
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: text/html");
+    client.println("Connection: close");
+    client.println();
+    
+    client.println("<div>");
+    client.printf("<h2 style=\"font-size:48px;margin:20px 0;\">%s</h2>", class_names[1]); // "None"
+    client.printf("<p style=\"font-size:24px;color:#ffc107;\"><strong>Pre-check</strong> (100.0%% confident)</p>");
+    client.printf("<p style=\"color:#888;font-size:14px;\">Inference #%d | %d ms (⚡ fast-path)</p>", inference_count, total_time);
+    client.println("<hr style=\"border-color:#444;margin:20px 0;\"/>");
+    client.println("<h3>Detection Method:</h3>");
+    client.println("<p style=\"font-size:14px;color:#888;\">✓ Pixel-level preprocessing detected empty/background</p>");
+    client.println("<p style=\"font-size:14px;color:#888;\">✓ Skipped expensive ML inference</p>");
+    client.println("</div>");
+    
+    return;  // Exit early
+  }
+  
+  step_time = millis() - step_start;
+  Serial.println("      ✓ Hand likely present - proceeding with ML inference");
+  Serial.printf("      ⏱️  Time: %d ms\n", step_time);
+  
   // Step 3: Fill Input Tensor
-  Serial.println("\n[3/6] 📥 Fill Input Tensor");
+  Serial.println("\n[3/7] 📥 Fill Input Tensor");
   Serial.printf("      Input type: %s\n", (input->type == kTfLiteFloat32) ? "Float32" : "Int8");
   Serial.printf("      Input dims: ");
   for (int i = 0; i < input->dims->size; i++) {
@@ -374,7 +438,7 @@ void sendInference(WiFiClient &client) {
   Serial.printf("      ⏱️  Time: %d ms\n", step_time);
   
   // Step 4: Run Inference
-  Serial.println("\n[4/6] 🧠 Run Model Inference");
+  Serial.println("\n[4/7] 🧠 Run Model Inference");
   Serial.printf("      Model size: %d bytes\n", g_model_len);
   Serial.printf("      Tensor arena: %d KB\n", kTensorArenaSize / 1024);
   step_start = millis();
@@ -396,7 +460,7 @@ void sendInference(WiFiClient &client) {
   Serial.printf("      ⏱️  Time: %d ms\n", step_time);
   
   // Step 5: Process Output
-  Serial.println("\n[5/6] 📊 Process Output");
+  Serial.println("\n[5/7] 📊 Process Output");
   Serial.printf("      Output type: %s\n", (output->type == kTfLiteFloat32) ? "Float32" : "Int8");
   Serial.printf("      Num classes: %d\n", num_classes);
   step_start = millis();
@@ -426,7 +490,7 @@ void sendInference(WiFiClient &client) {
   uint32_t total_time = millis() - total_start;
   
   // Step 6: Results Summary
-  Serial.println("\n[6/6] 🎯 Results Summary");
+  Serial.println("\n[6/7] 🎯 Results Summary");
   Serial.println("      ╔═══════════════════════════════════════╗");
   Serial.printf("      ║ 🏆 Winner: %-25s║\n", class_names[best_idx]);
   Serial.printf("      ║ 📈 Confidence: %.1f%%                   ║\n", best_prob * 100);
