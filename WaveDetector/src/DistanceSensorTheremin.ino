@@ -6,6 +6,7 @@
 #define XSHUT2 18
 #define ADDRESS1 0x30
 #define ADDRESS2 0x31
+#define ARR_SIZE 40
 // #define TIMEOUT 500
 
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
@@ -14,8 +15,13 @@ Adafruit_VL53L0X lox2 = Adafruit_VL53L0X();
 int pwmChannel = 0;
 int freq = 5000;         // 5 kHz
 int resolution = 8;      // duty: 0–255 wrong, its bits?
+int measurements[ARR_SIZE];
 
 void setup() {
+  for (int i = 0 ; i < ARR_SIZE ; i++) {
+    measurements[i] = 2000;
+  }
+
   Serial.begin(115200);
   pinMode(LED1, OUTPUT);
   // pinMode(LED2, OUTPUT);
@@ -66,9 +72,21 @@ int prevTime = 0;
 int prevSensor = 0;
 int curtime = 0;
 int timeout = 1000;
-int mode = 0; // 0 for gestures, 1 for height (volume)
+int mode = -1; // 0 for gestures, 1 for height (volume)
 int modeTime = -1;
 int volume = 0;
+int loopIndex = 0;
+int sum = 0;
+int vol = 50;
+int volDelay = -1;
+
+int arrayMean() {
+  sum = 0;
+  for (int i = 0 ; i < ARR_SIZE ; i++) {
+    sum += measurements[i];
+  }
+  return sum / ARR_SIZE;
+}
 
 
 void loop() {
@@ -77,11 +95,23 @@ void loop() {
   curtime = millis();
 
     
-  Serial.print("Reading a measurement... \n");
+  // Serial.print("Reading a measurement... \n");
   lox1.rangingTest(&measure1, false); // pass in 'true' to get debug data printout!
   lox2.rangingTest(&measure2, false);
+  if (measure1.RangeStatus != 4 && modeTime < curtime) {
+    modeTime = curtime + 1;
+    measurements[loopIndex % ARR_SIZE] = measure1.RangeMilliMeter;
+    loopIndex++;
+    Serial.println(arrayMean());
+    if (arrayMean() < 100) {
+      mode *= -1;
+      for (int i = 0 ; i < ARR_SIZE ; i++) {
+        measurements[i] = 2000;
+      }
+    }
+  }
 
-  if (mode == 0) {
+  if (mode == -1) {
     if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
       // If both sensors detected, check if held for 3 seconds. Switch mode if so
       if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
@@ -90,21 +120,17 @@ void loop() {
         }
         else if (modeTime > 0 && modeTime <= curtime)
         {
-          mode = 1;
+          // mode = 1;
           modeTime = -1;
           Serial.println("Mode Switched");
         }
-      }
-      else
-      {
-        modeTime = -1;
       }
       if (prevSensor == 0 || curtime > (prevTime + timeout)) {
         prevSensor = 1;
         prevTime = curtime;
       }
       else if (prevSensor == 2 && curtime < (prevTime + timeout)) {
-        Serial.println("RIGHT WAVE DETECTED");
+        Serial.println("NEXT");
         digitalWrite(LED1, HIGH);
         delay(1000);
         digitalWrite(LED1, LOW);
@@ -118,7 +144,7 @@ void loop() {
         prevTime = curtime;
       }
       else if (prevSensor == 1 && curtime < (prevTime + timeout)) {
-        Serial.println("LEFT WAVE DETECTED");
+        Serial.println("PREV");
         ledcWrite(pwmChannel, 255);
         delay(1000);
         ledcWrite(pwmChannel, 0);
@@ -130,26 +156,13 @@ void loop() {
   else // Volume control mode
   {
     // Emulate volume control in the light at pin 26
-    if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
-      volume = measure1.RangeMilliMeter / (600 / 255);
+    if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600 && volDelay <= curtime) {
+      vol = measure2.RangeMilliMeter / (600 / 255);
+      volume = vol > 100 ? 100 : vol;
+      Serial.print("VOL ");
       Serial.println(volume);
       ledcWrite(pwmChannel, volume);
-      if (measure1.RangeMilliMeter < 200) {
-        if (modeTime < 0) {
-          modeTime = millis() + 3000;
-        }
-        else if (modeTime < millis()) {
-          mode = 0;
-          modeTime = -1;
-          ledcWrite(pwmChannel, 0);
-        }
-      }
-      else
-      {
-        modeTime = -1;
-      }
+      volDelay = curtime + 500;
     }
   }
-    
-  delay(50);
 }
