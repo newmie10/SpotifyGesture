@@ -7,6 +7,7 @@ from dotenv import load_dotenv, set_key
 load_dotenv()  # Load variables from .env
 API_ID = os.getenv("SPOTIFY_ID")
 API_KEY = os.getenv("SPOTIFY_SECRET")
+URI = "http://127.0.0.1:5173"
 ENV_PATH = ".env"
 
 # 1. Set these values:
@@ -14,124 +15,123 @@ SERIAL_PORT = "/dev/ttyUSB0"  # Windows example: "COM3"
 BAUD_RATE = 115200
 
 # Optional: fix a device_id if needed, otherwise None
-DEVICE_ID = None  # e.g. "1234abcd..."
+DEVICE_ID = "0d1841b0976bae2a3a310dd74c0f3df354899bc8"  # e.g. "1234abcd..."
 
 
-def spotify_api(method=None, endpoint=None, json_body=None, params=None, token=None):
+def js_api(method, endpoint, json_body=None):
     """Helper to call Spotify Web API."""
-    if endpoint is None:
-        data = {
-            'grant_type': 'client_credentials',
-            'client_id': API_ID,
-            'client_secret': API_KEY,
-        }
+    print(f"Sending command {method} on {endpoint}")
 
-        response = requests.post('https://accounts.spotify.com/api/token', data=data)
-        print("POST https://accounts.spotify.com/api/token", "->", response.status_code, response.text[:200])
-        return response
-    else:
-        if token is None or method is None or endpoint is None:
-            print("Provide correct parameters please. ")
-            return
-        url = f"https://api.spotify.com/v1/me/player/{endpoint}"
+    # url = f"{URI}/{endpoint}?device_id={DEVICE_ID}"
+    url = f"{URI}/{endpoint}"
 
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json"
-        }
+    headers = {
+        "Content-Type": "application/json",
+    }
 
-        response = requests.request(
-            method=method,
-            url=url,
-            headers=headers,
-            json=json_body,
-            params=params
-        )
+    resp = requests.request(
+        method=method,
+        url=url,
+        headers=headers,
+        json=json_body,
+    )
 
-        print(method, url, "->", response.status_code, response.json())
-        return response
+    print(method, url, "->", resp.status_code, resp.json())
+    return resp
 
-def update_token():
-    """Updates the Spotify API token in env if expired or missing"""
-    token = os.getenv("ACCESS_TOKEN", "0")
-    if len(token) > 1:
-        expiry = os.getenv("ACCESS_EXPIRY", "0")
-        print("Expiry: ", expiry, "Time: ", time.time())
-        if len(expiry) > 1 and time.time() < float(expiry):
-            print("Token not changed")
-            return
-        
-    # tokens last for 1 hour
-    res = spotify_api().json()
-    set_key(".env", "ACCESS_TOKEN", str(res['access_token']))
-    set_key(".env", "ACCESS_EXPIRY", str(time.time() + 3600))
-    load_dotenv(override=True)
-    print("New token acquired")
+# def refresh_access_token():
+#     """Use stored REFRESH_TOKEN to get a new ACCESS_TOKEN."""
+#     refresh_token = os.getenv("REFRESH_TOKEN")
+#     if not refresh_token:
+#         print("No REFRESH_TOKEN in env; run spotify_auth_cli.py first.")
+#         return False
+
+#     data = {
+#         "grant_type": "refresh_token",
+#         "refresh_token": refresh_token,
+#     }
+
+#     resp = requests.post(
+#         "https://accounts.spotify.com/api/token",
+#         data=data,
+#         auth=(API_ID, API_KEY),  # your SPOTIFY_ID / SPOTIFY_SECRET
+#     )
+
+#     print("POST /api/token (refresh) ->", resp.status_code, resp.text[:200])
+
+#     if resp.status_code != 200:
+#         return False
+
+#     payload = resp.json()
+#     access_token = payload["access_token"]
+#     expires_in = payload.get("expires_in", 3600)
+#     new_refresh = payload.get("refresh_token")
+
+#     set_key(ENV_PATH, "ACCESS_TOKEN", access_token)
+#     set_key(ENV_PATH, "ACCESS_EXPIRY", str(time.time() + expires_in - 60))
+#     if new_refresh:
+#         set_key(ENV_PATH, "REFRESH_TOKEN", new_refresh)
+
+#     load_dotenv(override=True)
+#     return True
 
 
-def handle_command(cmd, token):
-    """Map serial commands to Spotify actions."""
+# def update_token():
+#     """Ensure ACCESS_TOKEN is valid; refresh if needed."""
+#     token = os.getenv("ACCESS_TOKEN")
+#     expiry = os.getenv("ACCESS_EXPIRY")
+
+#     if token and expiry:
+#         try:
+#             if time.time() < float(expiry):
+#                 return  # still valid
+#         except ValueError:
+#             pass
+
+#     if not refresh_access_token():
+#         print("Failed to refresh token. Run spotify_auth_cli.py again.")
+
+
+def handle_command(cmd):
     cmd = cmd.upper()
 
     if cmd == "PLAY":
-        params = {}
-        if DEVICE_ID:
-            params["device_id"] = DEVICE_ID
-        spotify_api("PUT", "play", params=params, token=token)
+        js_api("POST", "play")
 
     elif cmd == "PAUSE":
-        params = {}
-        if DEVICE_ID:
-            params["device_id"] = DEVICE_ID
-        spotify_api("PUT", "me/player/pause", params=params)
+        js_api("POST", "pause")
 
     elif cmd == "NEXT":
-        params = {}
-        if DEVICE_ID:
-            params["device_id"] = DEVICE_ID
-        spotify_api("POST", "me/player/next", params=params)
+        js_api("POST", "next")
 
     elif cmd == "PREV":
-        params = {}
-        if DEVICE_ID:
-            params["device_id"] = DEVICE_ID
-        spotify_api("POST", "me/player/previous", params=params)
+        js_api("POST", "previous")
 
     elif cmd.startswith("VOL "):
-        # Example: "VOL 50"
-        try:
-            level = int(cmd.split()[1])
-            level = max(0, min(100, level))
-        except Exception:
-            print("Invalid VOL command")
-            return
-
-        params = {"volume_percent": level}
-        if DEVICE_ID:
-            params["device_id"] = DEVICE_ID
-        spotify_api("PUT", "me/player/volume", params=params)
+        value = cmd[4:].strip()          # everything after "VOL "
+        if value.isdigit():
+            js_api("POST", f"volume?volume_percent={value}")
 
     else:
         print("Unknown command:", cmd)
 
 
 def main():
-    # Open serial port
     ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
     print(f"Listening on {SERIAL_PORT} at {BAUD_RATE} baud")
 
-    time.sleep(2)  # give ESP32 time to reset
-    update_token()
-
-    token = os.getenv("ACCESS_TOKEN")
+    time.sleep(2)
 
     while True:
+        # update_token()
+        # token = os.getenv("ACCESS_TOKEN")
+
         line = ser.readline().decode(errors="ignore").strip()
         if not line:
             continue
-        print("Received:", line)
-        handle_command(line, token)
 
+        print("Received:", line)
+        handle_command(line)
 
 if __name__ == "__main__":
     main()
