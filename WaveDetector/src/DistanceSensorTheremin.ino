@@ -2,8 +2,8 @@
 
 #define LED1 2
 #define LED2 26
-#define XSHUT1 23
-#define XSHUT2 18
+#define XSHUT1 4
+#define XSHUT2 2
 #define ADDRESS1 0x30
 #define ADDRESS2 0x31
 #define ARR_SIZE 40

@@ -11,7 +11,7 @@ URI = "http://127.0.0.1:5173"
 ENV_PATH = ".env"
 
 # 1. Set these values:
-SERIAL_PORT = "/dev/ttyUSB0"  # Windows example: "COM3"
+SERIAL_PORT = "/dev/ttyACM0"  # Windows example: "COM3"
 BAUD_RATE = 115200
 
 # Optional: fix a device_id if needed, otherwise None
