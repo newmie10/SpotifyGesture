@@ -9,7 +9,7 @@ bool logged = false;
 
 // WiFi (edit these)
 const char *ssid     = "NETGEAR69";
-const char *password = "deeptrail850";
+const char *password = "";
 
 WiFiServer server(80);
 
