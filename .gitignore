@@ -6,37 +6,37 @@
 /WaveDetector/.vscode/launch.json
 /WaveDetector/.vscode/ipch
 
-# HandSignalDetection
+# HandDetector
 
-/HandSignalDetection/S3_Files/.pio
-/HandSignalDetection/S3_Files/.vscode
+/HandDetector/Handnet_Inference/.pio
+/HandDetector/Handnet_Inference/.vscode
 
 # Python environment and build artifacts
-HandSignalDetection/Model_Training/__pycache__/
-HandSignalDetection/Model_Training/*.pyc
-HandSignalDetection/Model_Training/*.pyo
-HandSignalDetection/Model_Training/*.pyd
+HandDetector/Handnet_Training/__pycache__/
+HandDetector/Handnet_Training/*.pyc
+HandDetector/Handnet_Training/*.pyo
+HandDetector/Handnet_Training/*.pyd
 
 # Virtual environments
-HandSignalDetection/Model_Training/venv/
-HandSignalDetection/Model_Training/.venv/
-HandSignalDetection/Model_Training/env/
-HandSignalDetection/Model_Training/.env/
+HandDetector/Handnet_Training/venv/
+HandDetector/Handnet_Training/.venv/
+HandDetector/Handnet_Training/env/
+HandDetector/Handnet_Training/.env/
 
 # Jupyter and checkpoints
-HandSignalDetection/Model_Training/.ipynb_checkpoints/
+HandDetector/Handnet_Training/.ipynb_checkpoints/
 
 # Packaging and build
-HandSignalDetection/Model_Training/build/
-HandSignalDetection/Model_Training/dist/
-HandSignalDetection/Model_Training/*.egg-info/
+HandDetector/Handnet_Training/build/
+HandDetector/Handnet_Training/dist/
+HandDetector/Handnet_Training/*.egg-info/
 
 # Logs
-HandSignalDetection/Model_Training/*.log
+HandDetector/Handnet_Training/*.log
 
 # Cache and temp
-HandSignalDetection/Model_Training/.pytest_cache/
-HandSignalDetection/Model_Training/.mypy_cache/
-HandSignalDetection/Model_Training/.ruff_cache/
-HandSignalDetection/Model_Training/.DS_Store
+HandDetector/Handnet_Training/.pytest_cache/
+HandDetector/Handnet_Training/.mypy_cache/
+HandDetector/Handnet_Training/.ruff_cache/
+HandDetector/Handnet_Training/.DS_Store
 

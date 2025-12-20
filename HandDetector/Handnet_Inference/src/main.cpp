@@ -14,6 +14,7 @@
 
 // Gesture control settings
 unsigned long last_gesture_time = 0;
+unsigned long check_time = 0;
 const unsigned long GESTURE_COOLDOWN_MS = 2000;  // 2 seconds between gestures
 int last_gesture_class = -1;
 
@@ -22,6 +23,8 @@ int inference_count = 0;
 // Class names (matches your training labels)
 const char* class_names[] = {"Closed Hand", "None", "Open Hand"};
 const int num_classes = 3;
+unsigned long timeout = 0;
+bool checked = false;
 
 // TensorFlow globals
 namespace {
@@ -202,7 +205,7 @@ bool is_None() {
     float mean = sum / (MODEL_W * MODEL_H);
   float contrast = max_val - min_val;
   
-    if (mean > 0.16f) {
+    if (mean > 0.38f) {
       return false;
     }
   
@@ -269,15 +272,39 @@ int runInference() {
     return -1;
   }
   
-  // Check if None
-  if (is_None()) {
-    return 1;  // None class
+  // Check if None - only if cooldown expired
+  if (millis() - timeout < 3000) {
+    // Still in cooldown, skip this check
+    return -1;
+  }
+
+  // Cooldown expired, check if hand is present
+  if (!checked) {
+    // We're in a check interval
+    if (millis() - check_time > 500) {
+      // Timing is good, do the check
+      checked = true;
+      if (is_None()) {
+        return 1;  // None class detected
+      }
+      // Not none, continue to inference below
+    } else {
+      // Still waiting for check timing
+      return 1;
+    }
   } else {
-    delay(250);
+    // Already checked
     if (is_None()) {
-      return 1;  // None class
+      return 1;  // Still none
+    } else {
+      // Something appeared, trigger new checking cycle
+      check_time = millis();
+      checked = false;
+      return 1;
     }
   }
+
+  // If we got here, hand is present - run inference
   
   // Fill input tensor
   fillInputTensor();
@@ -305,6 +332,11 @@ int runInference() {
       best_idx = i;
     }
   }
+
+  if (is_None()) { ///check if its not there anymore
+    Serial.println("Nothing was remaining, so we will abort");
+    return 1;
+  }
   
   // Print inference result (for debugging/monitoring)
   Serial.printf("[INFERENCE] %s (%.1f%%) | %d ms | [%.2f, %.2f, %.2f]\n", 
@@ -313,6 +345,10 @@ int runInference() {
   
   inference_count++;
   
+  
+
+  timeout = millis();
+
   return best_idx;
 }
 
@@ -366,7 +402,5 @@ void loop() {
       Serial.println("⏳ Cooldown active, skipping command");
     }
   }
-  
-  // Small delay before next check
-  delay(500);
+
 }
