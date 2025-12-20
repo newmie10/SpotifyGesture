@@ -1,5 +1,9 @@
 # Handnet Planning
 
+## Camera Testing
+- Simple web app to recieve stream
+- Tested OV Cam functionality, header file, pin setup, etc.
+
 ## Data Collection
 - `Data_Collection.cpp`
 - Collect data in native 160x120 color format
@@ -9,6 +13,7 @@
 - Used autoclicker to take ~3 pictures per second
 - Varied hand slightly to account for different hover levels, rotations, angles
 - Added shading to account for shadows during demos
+- Named images on data collection web app, iterated through count for numbers
 
 ### Preprocessing
 - Added color augmenting to assist inference on darked skin (training only)
@@ -56,22 +61,20 @@
 
 ## Phase 2: Adjust to simplify model
 
-- Hand signals were not different enough - some looked very similar
+- Hand signals were not different enough - some looked very similar after preprocessing
 
-### Gestures
+### New Gestures
 
 - Peace Sign: Like Song
 - Open Hand: Play
 - Closed Hand: Pause
 
 ### Challenges
-- Peace still infered as open hand
+- Peace still inferred as open hand, two fingers not disguisable
 
 ## Phase 3 
 
 ### Data Collection
-
-#### Phase 3
 
 - Done in CS Makerspace (Similar to production environment)
 - Located in Data_Collection.cpp
@@ -84,7 +87,7 @@
 
 ### Challenges
 - Inference takes ~5 seconds with model scale and input size
-- Need to scale from 64x64 to 32x32 or 48x48 to accelerate model inference
+- Need to scale input and hidden layers from 64x64 to 32x32 or 48x48 to accelerate model inference
 
 ## Final Model
 - Done in LGRC A104A to get real production lighting
@@ -98,21 +101,23 @@
 
 ### Model Optimizations
 - Quanitize Model to int8 from fp32 (4x reduction)
-- Change input size from 64x64 (~5 sec inference) to 48x48 (~1.5 sec inference)
+- Change input size and hidden layers from 64x64 scale (~5 sec inference) to 48x48 scale (~1.5 sec inference)
 
-## Triggering Camera
+## Triggering Capture
 - Initial idea: Use distance sensor facing down to trigger
 - 3D printed model broke, as well as we ran out of serial communication ports
 
 ### Mean Filter
 - Used mean greyscale pixel value of the entire picture
-- When elevated above threshold, camera triggers
+- When elevated above threshold, capture signal is given 
 
 ### Signal Debouncing / Filtering
-- 200 ms after initial trigger, check again to ensure mean is high enough before trigger
-- Accounts for swiping noise from gesturing in front of camera
+- 200 ms after initial trigger, check again to ensure mean fitler is still active before trigger
+    - Accounts for swiping noise from gesturing intended for distance sensor in front of camera
 - After 200 ms, run inference using handnet
 
-### Communication with spotify
+## Communication with spotify
+- `main.cpp` / `SpotifyLink.cpp`
+- Simplify final output and serial loggings
 - Based on inference, print final result to serial
-- Python serial monitor checks for phrasing and communicates with spotify API
+- Python serial monitor checks for phrasing and communicates with spotify API, noted in other documentation
