@@ -2,8 +2,8 @@
 
 #define LED1 2
 #define LED2 26
-#define XSHUT1 23
-#define XSHUT2 18
+#define XSHUT1 27
+#define XSHUT2 33
 #define ADDRESS1 0x30
 #define ADDRESS2 0x31
 #define ARR_SIZE 40
@@ -62,7 +62,7 @@ void setup() {
   Serial.println("PWM initializing");
 
   ledcSetup(0, freq, resolution);
-  ledcAttachPin(LED2, pwmChannel);
+  ledcAttachPin(LED1, pwmChannel);
 
   // power 
   Serial.println(F("VL53L0X API Simple Ranging example\n\n")); 
@@ -102,7 +102,7 @@ void loop() {
     modeTime = curtime + 1;
     measurements[loopIndex % ARR_SIZE] = measure1.RangeMilliMeter;
     loopIndex++;
-    Serial.println(arrayMean());
+    // Serial.println(arrayMean());
     if (arrayMean() < 100) {
       mode *= -1;
       for (int i = 0 ; i < ARR_SIZE ; i++) {
@@ -112,33 +112,23 @@ void loop() {
   }
 
   if (mode == -1) {
-    if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 600) {
+    ledcWrite(0, 0);
+    if (measure1.RangeStatus != 4 && measure1.RangeMilliMeter < 300) {
       // If both sensors detected, check if held for 3 seconds. Switch mode if so
-      if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
-        if (modeTime < 0) {
-          modeTime = curtime + 3000;
-        }
-        else if (modeTime > 0 && modeTime <= curtime)
-        {
-          // mode = 1;
-          modeTime = -1;
-          Serial.println("Mode Switched");
-        }
-      }
       if (prevSensor == 0 || curtime > (prevTime + timeout)) {
         prevSensor = 1;
         prevTime = curtime;
       }
       else if (prevSensor == 2 && curtime < (prevTime + timeout)) {
         Serial.println("NEXT");
-        digitalWrite(LED1, HIGH);
-        delay(1000);
-        digitalWrite(LED1, LOW);
+        // digitalWrite(LED1, HIGH);
+        // delay(1000);
+        // digitalWrite(LED1, LOW);
         prevSensor = 0;
         prevTime = -1000;
       }
     }
-    else if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600) {
+    else if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 300) {
       if (prevSensor == 0 || curtime > (prevTime + timeout)) {
         prevSensor = 2;
         prevTime = curtime;
@@ -155,9 +145,10 @@ void loop() {
   }
   else // Volume control mode
   {
+    digitalWrite(LED1, HIGH);
     // Emulate volume control in the light at pin 26
-    if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 600 && volDelay <= curtime) {
-      vol = measure2.RangeMilliMeter / (600 / 255);
+    if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 300 && volDelay <= curtime) {
+      vol = measure2.RangeMilliMeter / (300 / 255);
       volume = vol > 100 ? 100 : vol;
       Serial.print("VOL ");
       Serial.println(volume);
