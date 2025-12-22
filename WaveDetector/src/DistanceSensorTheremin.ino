@@ -1,4 +1,5 @@
 #include "Adafruit_VL53L0X.h"
+#include "screen.h"
 
 #define LED1 2
 #define LED2 26
@@ -7,6 +8,11 @@
 #define ADDRESS1 0x30
 #define ADDRESS2 0x31
 #define ARR_SIZE 40
+#define TFT_MOSI=23
+#define TFT_SCLK=18
+#define TFT_DC=2
+#define TFT_RST=4
+
 // #define TIMEOUT 500
 
 Adafruit_VL53L0X lox1 = Adafruit_VL53L0X();
@@ -74,7 +80,7 @@ int curtime = 0;
 int timeout = 1000;
 int mode = -1; // 0 for gestures, 1 for height (volume)
 int modeTime = -1;
-int volume = 0;
+int volume = 100;
 int loopIndex = 0;
 int sum = 0;
 int vol = 50;
@@ -145,15 +151,19 @@ void loop() {
   }
   else // Volume control mode
   {
-    digitalWrite(LED1, HIGH);
+    ledcWrite(pwmChannel, volume);
     // Emulate volume control in the light at pin 26
     if (measure2.RangeStatus != 4 && measure2.RangeMilliMeter < 300 && volDelay <= curtime) {
-      vol = measure2.RangeMilliMeter / (300 / 255);
+      vol = measure2.RangeMilliMeter / (1000 / 255);
       volume = vol > 100 ? 100 : vol;
       Serial.print("VOL ");
       Serial.println(volume);
-      ledcWrite(pwmChannel, volume);
       volDelay = curtime + 500;
     }
   }
 }
+
+
+
+
+
