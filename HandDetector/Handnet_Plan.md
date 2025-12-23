@@ -59,6 +59,11 @@
 5. Use NN classifier (either raw or pretrained) to classify between the gestures (no 'lack of gesture' yet)
 6. Display through serial
 
+### Challenges
+- Images were too noisy
+- Basically realized we had to focus the camera down at some sort of blank background
+- ESP32 size constraints mean we needed a smaller model than possible for the capacity this dataset neededd
+
 ## Phase 2: Adjust to simplify model
 
 - Hand signals were not different enough - some looked very similar after preprocessing
@@ -68,6 +73,7 @@
 - Peace Sign: Like Song
 - Open Hand: Play
 - Closed Hand: Pause
+- ~500 each
 
 ### Challenges
 - Peace still inferred as open hand, two fingers not disguisable
@@ -78,6 +84,7 @@
 
 - Done in CS Makerspace (Similar to production environment)
 - Located in Data_Collection.cpp
+- ~500 each
 
 ### Gestures
 
@@ -91,7 +98,8 @@
 
 ## Final Model
 - Done in LGRC A104A to get real production lighting
-- Used same file in Data_Collection.,cpp
+- Used same file in Data_Collection.cpp
+- ~1000 each class
 
 ### Gestures
 
@@ -121,3 +129,36 @@
 - Simplify final output and serial loggings
 - Based on inference, print final result to serial
 - Python serial monitor checks for phrasing and communicates with spotify API, noted in other documentation
+
+
+## Full Story
+
+- First setup camera and all - had trouble with psram on board but got it to stream to the web
+- Insert video here
+- Then started doing data collection by saving pngs on the web, sending the buffer through wifi to my computer. Connected to the esp32s network for data collection
+- Realized that phase 1 images (insert pictures) were too noisy. instead needed a blank background
+
+- Transitioned to build a downward facing view for the camera via the apparatus
+- went to makerspace, built something that would allow us to have the esp32 facing down at a base
+- Attached a black piece of construction paper to the bottom for a dark constant background
+
+- Tested height, after adjusting drilled a hole through and mounted camera
+- Tried phase 2 with 3 classes, peace open hand and closed hand (insert images)
+- Realized open hand and peace looked too similar for the small cnn, even 64x64 model could not distinguish it
+
+- Moved to phase 3, adjusted to open hand and closed hand, but then had a third class of nothing to denoise
+- Insert images
+- Seemed to work well although the nothing class was still getting mixed up 
+- Had a test set accuracy of 100% but could not deal well with noise and such. could be overfit
+
+- Moved on to model speed testing
+- Realized inference from the 64x64 scale model took around ~5 seconds
+- 32x32 only took half a second, but was not very accurate
+- settled on ~1.5 second inference from data scaled to 48x48 with hidden layers scaled there
+- Used printing and profiling to ensure speed
+
+- Finally collected data on the final black painted mount in the real production room
+- Took different hand angles and rotations, as well as different shadings using my computer case to capture variation
+- ~1000 images each to increase the training data and help capture variance
+- Then augmented images to be darker to help with darker skin inference
+- worked very well, and even 80%+ accuracy on images with 5% gaussian noise, and perfect on rotated images.
