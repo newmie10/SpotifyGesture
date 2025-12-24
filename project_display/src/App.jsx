@@ -2,6 +2,9 @@ import { useState } from 'react'
 import ModelViewer from './components/ModelViewer'
 import './App.css'
 
+// Helper to get correct asset path for both dev and production
+const getAssetPath = (path) => `${import.meta.env.BASE_URL}${path.startsWith('/') ? path.slice(1) : path}`
+
 function EngineeringProcess() {
   const [selectedStep, setSelectedStep] = useState('concept')
   
@@ -158,15 +161,15 @@ function EngineeringProcess() {
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/Initial_Wood/Construct_1.png" alt="Apparatus Construction 1" />
+                  <img src={getAssetPath("/HardwareDesign/Initial_Wood/Construct_1.png")} alt="Apparatus Construction 1" />
                   <p>Apparatus Construction 1</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/Initial_Wood/Construct_2.png" alt="Apparatus Construction 2" />
+                  <img src={getAssetPath("/HardwareDesign/Initial_Wood/Construct_2.png")} alt="Apparatus Construction 2" />
                   <p>Apparatus Construction 2</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/Tape_Test/Tape_Test.png" alt="ESP32 Taped to Mount" />
+                  <img src={getAssetPath("/HardwareDesign/Tape_Test/Tape_Test.png")} alt="ESP32 Taped to Mount" />
                   <p>ESP32 Taped to Mount</p>
                 </div>
               </div>
@@ -184,15 +187,15 @@ function EngineeringProcess() {
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/3d_Mount/Bottom_CAD.png" alt="CAD Design Bottom View" />
+                  <img src={getAssetPath("/HardwareDesign/3d_Mount/Bottom_CAD.png")} alt="CAD Design Bottom View" />
                   <p>CAD Design Bottom View</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/3d_Mount/Full_CAD.png" alt="CAD Design Full View" />
+                  <img src={getAssetPath("/HardwareDesign/3d_Mount/Full_CAD.png")} alt="CAD Design Full View" />
                   <p>CAD Design Full View</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/3d_Mount/Final_Print.png" alt="Final 3D Print" />
+                  <img src={getAssetPath("/HardwareDesign/3d_Mount/Final_Print.png")} alt="Final 3D Print" />
                   <p>Final 3D Print</p>
                 </div>
               </div>
@@ -205,7 +208,7 @@ function EngineeringProcess() {
               </p>
               
               <div className="hardware-image" style={{ maxWidth: '400px', margin: '1rem auto' }}>
-                <img src="/HardwareDesign/Drilled_Hole.png" alt="Drilled Camera Hole" />
+                <img src={getAssetPath("/HardwareDesign/Drilled_Hole.png")} alt="Drilled Camera Hole" />
                 <p>Drilled Camera Hole</p>
               </div>
             </div>
@@ -227,19 +230,19 @@ function EngineeringProcess() {
               
               <div className="image-grid-four">
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/TOF_Mounts/TOF_CAD.png" alt="TOF Mount CAD Design" />
+                  <img src={getAssetPath("/HardwareDesign/TOF_Mounts/TOF_CAD.png")} alt="TOF Mount CAD Design" />
                   <p>TOF Mount CAD Design</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/TOF_Mounts/TOF_Second_Iteration.png" alt="TOF Mount Second Iteration" />
+                  <img src={getAssetPath("/HardwareDesign/TOF_Mounts/TOF_Second_Iteration.png")} alt="TOF Mount Second Iteration" />
                   <p>TOF Mount Second Iteration</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/TOF_Mounts/TOF_Full_Iteration.png" alt="TOF Mount Full Iteration" className="rotate-90-ccw" />
+                  <img src={getAssetPath("/HardwareDesign/TOF_Mounts/TOF_Full_Iteration.png")} alt="TOF Mount Full Iteration" className="rotate-90-ccw" />
                   <p>TOF Mount Full Iteration</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/TOF_Mounts/TOF_Final.png" alt="Final TOF Mount" />
+                  <img src={getAssetPath("/HardwareDesign/TOF_Mounts/TOF_Final.png")} alt="Final TOF Mount" />
                   <p>Final TOF Mount</p>
                 </div>
               </div>
@@ -252,7 +255,7 @@ function EngineeringProcess() {
               </p>
               
               <div className="hardware-image" style={{ maxWidth: '400px', margin: '1rem auto' }}>
-                <img src="/HardwareDesign/Painted_Black.png" alt="Painted Black Apparatus" />
+                <img src={getAssetPath("/HardwareDesign/Painted_Black.png")} alt="Painted Black Apparatus" />
                 <p>Painted Black Apparatus</p>
               </div>
             </div>
@@ -265,11 +268,11 @@ function EngineeringProcess() {
               
               <div className="image-grid">
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/Final_Assembly/From_Front.png" alt="Final Assembly Front View" />
+                  <img src={getAssetPath("/HardwareDesign/Final_Assembly/From_Front.png")} alt="Final Assembly Front View" />
                   <p>Final Assembly Front View</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HardwareDesign/Final_Assembly/In_Demo.png" alt="Final Assembly In Demo" className="zoomed-out" />
+                  <img src={getAssetPath("/HardwareDesign/Final_Assembly/In_Demo.png")} alt="Final Assembly In Demo" className="zoomed-out" />
                   <p>Final Assembly In Demo</p>
                 </div>
               </div>
@@ -302,11 +305,11 @@ function EngineeringProcess() {
               
               <div className="image-grid">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Initial_View_From_Plank.png" alt="Initial Camera View" />
+                  <img src={getAssetPath("/HandDetector/Initial_View_From_Plank.png")} alt="Initial Camera View" />
                   <p>Initial View From Mounted Camera</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Data_Collection.png" alt="Data Collection Interface" />
+                  <img src={getAssetPath("/HandDetector/Data_Collection.png")} alt="Data Collection Interface" />
                   <p>Data Collection Web Interface</p>
                 </div>
               </div>
@@ -326,15 +329,15 @@ function EngineeringProcess() {
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Open_After_Processing.png" alt="Open Hand After Processing" />
+                  <img src={getAssetPath("/HandDetector/Open_After_Processing.png")} alt="Open Hand After Processing" />
                   <p>Open Hand After Processing</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Closed_After_Processing.png" alt="Closed Hand After Processing" />
+                  <img src={getAssetPath("/HandDetector/Closed_After_Processing.png")} alt="Closed Hand After Processing" />
                   <p>Closed Hand After Processing</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Augmented_Dark.png" alt="Augmented Dark Image" />
+                  <img src={getAssetPath("/HandDetector/Augmented_Dark.png")} alt="Augmented Dark Image" />
                   <p>Color Augmentation for Dark Skin</p>
                 </div>
               </div>
@@ -351,19 +354,19 @@ function EngineeringProcess() {
               
               <div className="image-grid-four">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase1/Thumbs_Up_68.jpg" alt="Phase 1 Thumbs Up" />
+                  <img src={getAssetPath("/HandDetector/Phase1/Thumbs_Up_68.jpg")} alt="Phase 1 Thumbs Up" />
                   <p>Phase 1: Thumbs Up</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase1/Thumbs_Down_166.jpg" alt="Phase 1 Thumbs Down" />
+                  <img src={getAssetPath("/HandDetector/Phase1/Thumbs_Down_166.jpg")} alt="Phase 1 Thumbs Down" />
                   <p>Phase 1: Thumbs Down</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase1/Open_Hand_966.jpg" alt="Phase 1 Open Hand" />
+                  <img src={getAssetPath("/HandDetector/Phase1/Open_Hand_966.jpg")} alt="Phase 1 Open Hand" />
                   <p>Phase 1: Open Hand</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase1/Point_Left_741.jpg" alt="Phase 1 Point Left" />
+                  <img src={getAssetPath("/HandDetector/Phase1/Point_Left_741.jpg")} alt="Phase 1 Point Left" />
                   <p>Phase 1: Point Left</p>
                 </div>
               </div>
@@ -380,15 +383,15 @@ function EngineeringProcess() {
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase2/Peace_Sign_1233.jpg" alt="Phase 2 Peace Sign" />
+                  <img src={getAssetPath("/HandDetector/Phase2/Peace_Sign_1233.jpg")} alt="Phase 2 Peace Sign" />
                   <p>Phase 2: Peace Sign</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase2/Open_Hand_198.jpg" alt="Phase 2 Open Hand" />
+                  <img src={getAssetPath("/HandDetector/Phase2/Open_Hand_198.jpg")} alt="Phase 2 Open Hand" />
                   <p>Phase 2: Open Hand</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase2/Closed_Hand_632.jpg" alt="Phase 2 Closed Hand" />
+                  <img src={getAssetPath("/HandDetector/Phase2/Closed_Hand_632.jpg")} alt="Phase 2 Closed Hand" />
                   <p>Phase 2: Closed Hand</p>
                 </div>
               </div>
@@ -405,15 +408,15 @@ function EngineeringProcess() {
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase3/Open_Hand_271.jpg" alt="Phase 3 Open Hand" />
+                  <img src={getAssetPath("/HandDetector/Phase3/Open_Hand_271.jpg")} alt="Phase 3 Open Hand" />
                   <p>Phase 3: Open Hand</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase3/Closed_Hand_569.jpg" alt="Phase 3 Closed Hand" />
+                  <img src={getAssetPath("/HandDetector/Phase3/Closed_Hand_569.jpg")} alt="Phase 3 Closed Hand" />
                   <p>Phase 3: Closed Hand</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Phase3/None_256.jpg" alt="Phase 3 None" />
+                  <img src={getAssetPath("/HandDetector/Phase3/None_256.jpg")} alt="Phase 3 None" />
                   <p>Phase 3: None (Background)</p>
                 </div>
               </div>
@@ -444,36 +447,36 @@ function EngineeringProcess() {
               </p>
               
               <div className="hardware-image" style={{ maxWidth: '400px', margin: '1rem auto' }}>
-                <img src="/HandDetector/Shadows.png" alt="Shadow Variations" />
+                <img src={getAssetPath("/HandDetector/Shadows.png")} alt="Shadow Variations" />
                 <p>Shadow Variation Testing</p>
               </div>
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/Open_Hand_223.jpg" alt="Final Open Hand 1" />
+                  <img src={getAssetPath("/HandDetector/Final/Open_Hand_223.jpg")} alt="Final Open Hand 1" />
                   <p>Final: Open Hand Example 1</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/Open_Hand_361.jpg" alt="Final Open Hand 2" />
+                  <img src={getAssetPath("/HandDetector/Final/Open_Hand_361.jpg")} alt="Final Open Hand 2" />
                   <p>Final: Open Hand Example 2</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/Closed_Hand_658.jpg" alt="Final Closed Hand 1" />
+                  <img src={getAssetPath("/HandDetector/Final/Closed_Hand_658.jpg")} alt="Final Closed Hand 1" />
                   <p>Final: Closed Hand Example 1</p>
                 </div>
               </div>
               
               <div className="image-grid-three">
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/Closed_Hand_1472.jpg" alt="Final Closed Hand 2" />
+                  <img src={getAssetPath("/HandDetector/Final/Closed_Hand_1472.jpg")} alt="Final Closed Hand 2" />
                   <p>Final: Closed Hand Example 2</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/None_2381.jpg" alt="Final None 1" />
+                  <img src={getAssetPath("/HandDetector/Final/None_2381.jpg")} alt="Final None 1" />
                   <p>Final: None Example 1</p>
                 </div>
                 <div className="hardware-image">
-                  <img src="/HandDetector/Final/None_2565.jpg" alt="Final None 2" />
+                  <img src={getAssetPath("/HandDetector/Final/None_2565.jpg")} alt="Final None 2" />
                   <p>Final: None Example 2</p>
                 </div>
               </div>
@@ -488,7 +491,7 @@ function EngineeringProcess() {
               </ul>
               
               <div className="hardware-image" style={{ maxWidth: '500px', margin: '1rem auto' }}>
-                <img src="/HandDetector/Learning_Curve.png" alt="Learning Curve" />
+                <img src={getAssetPath("/HandDetector/Learning_Curve.png")} alt="Learning Curve" />
                 <p>Model Training Learning Curve</p>
               </div>
               
@@ -827,12 +830,12 @@ function App() {
                   </ul>
                   
                   <div className="overview-image">
-                    <img src="/Demo_Day_Slide.png" alt="Demo Day Presentation Slide" />
+                    <img src={getAssetPath('/Demo_Day_Slide.png')} alt="Demo Day Presentation Slide" />
                     <p>Our Demo Day presentation slide</p>
                   </div>
                   
                   <div className="overview-image" style={{ marginTop: '2rem' }}>
-                    <img src="/Demo_Day.png" alt="Demo Day Setup" />
+                    <img src={getAssetPath('/Demo_Day.png')} alt="Demo Day Setup" />
                     <p>Our project setup at Demo Day</p>
                   </div>
                 </div>
@@ -975,7 +978,7 @@ function App() {
                 <h2>The Team</h2>
                 
                 <div className="team-intro">
-                  <img src="/All_People.jpg" alt="Team Photo" className="team-photo" />
+                  <img src={getAssetPath('/All_People.jpg')} alt="Team Photo" className="team-photo" />
                   <p>
                     SpotifyGesture was built by three UMass Amherst computer science students who combined their expertise in machine learning, systems integration, and embedded development to create an innovative hands-free music control system.
                   </p>
@@ -985,7 +988,7 @@ function App() {
                   
                   <div className="member-card-detailed">
                     <div className="member-header">
-                      <img src="/Austin.png" alt="Austin Fairbanks" className="member-photo-detailed" />
+                      <img src={getAssetPath('/Austin.png')} alt="Austin Fairbanks" className="member-photo-detailed" />
                       <div className="member-title-section">
                         <h3>Austin Fairbanks</h3>
                         <p className="member-role">Machine Learning & Model Development</p>
@@ -1013,7 +1016,7 @@ function App() {
 
                   <div className="member-card-detailed">
                     <div className="member-header">
-                      <img src="/Ian.png" alt="Ian Rapko" className="member-photo-detailed" />
+                      <img src={getAssetPath('/Ian.png')} alt="Ian Rapko" className="member-photo-detailed" />
                       <div className="member-title-section">
                         <h3>Ian Rapko</h3>
                         <p className="member-role">Hardware Integration & System Development</p>
@@ -1041,7 +1044,7 @@ function App() {
 
                   <div className="member-card-detailed">
                     <div className="member-header">
-                      <img src="/Sam.png" alt="Sam Newman" className="member-photo-detailed" />
+                      <img src={getAssetPath('/Sam.png')} alt="Sam Newman" className="member-photo-detailed" />
                       <div className="member-title-section">
                         <h3>Sam Newman</h3>
                         <p className="member-role">Embedded Systems, API Integration & Gesture Detection</p>
@@ -1106,7 +1109,7 @@ function App() {
                   </p>
                   <div className="video-container">
                     <video controls>
-                      <source src="/POV_Demo.mp4" type="video/mp4" />
+                      <source src={getAssetPath('/POV_Demo.mp4')} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>
@@ -1119,7 +1122,7 @@ function App() {
                   </p>
                   <div className="video-container">
                     <video controls>
-                      <source src="/Third_Person_Demo.mp4" type="video/mp4" />
+                      <source src={getAssetPath('/Third_Person_Demo.mp4')} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </div>

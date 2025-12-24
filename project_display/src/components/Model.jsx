@@ -6,7 +6,8 @@ import * as THREE from 'three'
 
 function Model() {
   // Load the STL file from the public directory
-  const geometry = useLoader(STLLoader, '/Spotify-Gesture.stl')
+  // Use import.meta.env.BASE_URL to handle both dev and production paths
+  const geometry = useLoader(STLLoader, `${import.meta.env.BASE_URL}Spotify-Gesture.stl`)
   
   useEffect(() => {
     // Compute vertex normals for better lighting
