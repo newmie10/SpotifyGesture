@@ -34,7 +34,7 @@ SpotifyGesture is a hands-free music control system that enables users to contro
 | Model Precision | int8 quantized |
 | ToF Detection Range | 30cm baseline |
 
-## 🏗️ Repository Structure
+## Repository Structure
 
 ```
 SpotifyGesture/
